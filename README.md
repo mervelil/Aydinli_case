@@ -4,8 +4,8 @@ U.S. Polo Assn. e-ticaret sitesi için desktop ve responsive ekranlarda çalış
 
 | | |
 |---|---|
-| **Canlı demo** | https://BURAYA-VERCEL-LINKI.vercel.app |
-| **Repository** | https://github.com/BURAYA-KULLANICI-ADI/uspa-onsite-case |
+| **Canlı demo** | (https://aydinli-case.vercel.app/)|
+| **Repository** | https://github.com/mervelil/Aydinli_case |
 | **Teknoloji** | Next.js (App Router) · React · TypeScript · CSS Modules · Web Animations API |
 | **Ek kütüphane** | Yok (yalnızca `next`, `react`, `react-dom`) |
 
