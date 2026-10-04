@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy: #1d2f5c;
+  --color-ink: #1b2a4b;
+  --color-brand-red: #b8233b;
+  --font-sans: var(--font-jost), "Jost", system-ui, sans-serif;
+}
+
+body {
+  @apply bg-white text-ink font-sans antialiased;
+}

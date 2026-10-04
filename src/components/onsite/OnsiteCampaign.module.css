@@ -1,0 +1,461 @@
+/*
+ * USPA on-site widget stilleri.
+ * Tüm ölçü, renk ve tipografi değerleri Figma'dan (USPA Expanding Modal) alınmıştır.
+ * Mobile-first yazıldı; desktop kuralları en alttaki media query'de.
+ * Widget, host sitenin CSS'inden etkilenmemesi ve onu etkilememesi için
+ * CSS Module ile izole edildi.
+ *
+ * NOT: 768px breakpoint'i config.ts > desktopQuery ile aynı tutulmalı.
+ */
+
+.root {
+  --os-ink: #1a2a4a; /* metin, ikon, koyu kart */
+  --os-blue: #254380; /* desktop teaser */
+  --os-olive: #8da349;
+  --os-berry: #a82f64;
+  --os-placeholder: #e7e7e7;
+  --os-ease-out: cubic-bezier(0, 0, 0.58, 1); /* Figma: Ease out */
+  --os-offset: 0px;
+
+  font-family: var(--font-jost), "Jost", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* :where() → sıfır specificity; component sınıfları bu reset'i rahatça ezer */
+:where(.root) button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.root :focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.iconDesktop {
+  display: none;
+}
+
+/* ───────────────────────── Teaser — responsive: alt bant (428×50) ───────────────────────── */
+
+.teaser {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  min-height: 50px;
+  padding: 0 0 env(safe-area-inset-bottom, 0px) 3px;
+  background: #fff;
+  color: var(--os-ink);
+  border-top: 1px solid var(--os-ink);
+  border-radius: 3px 3px 0 0;
+  animation: os-slide-up 300ms var(--os-ease-out) both;
+}
+
+.teaserLeaving {
+  animation: os-slide-down 240ms cubic-bezier(0.42, 0, 1, 1) forwards;
+}
+
+.teaser[data-concealed="true"] {
+  visibility: hidden;
+}
+
+/* 44px dokunma alanı; ikon soldan 20px'te */
+.teaserClose {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 50px;
+}
+
+.teaserTrigger {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 50px;
+  padding: 0 30px 0 13px; /* metin soldan 60px, chevron sağdan 30px */
+  text-align: left;
+}
+
+.teaserChevron {
+  flex: none;
+}
+
+/* ───────────────────────── Vertical ticker ───────────────────────── */
+
+.ticker {
+  display: grid;
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 28px;
+}
+
+/* Bekleyen öğeler yukarıda durur → yukarıdan girer, aşağı doğru çıkar. */
+.tickerItem {
+  grid-area: 1 / 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform: translateY(-100%);
+  opacity: 0;
+  transition:
+    transform 500ms var(--os-ease-out),
+    opacity 400ms ease;
+}
+
+.isActive {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.isLeaving {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+.tickerLead {
+  font-weight: 400;
+}
+
+.tickerHighlight {
+  font-weight: 600;
+}
+
+/* ───────────────────────── Panel — responsive: bottom sheet ───────────────────────── */
+
+.panel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1001;
+  background: #fff;
+  color: var(--os-ink);
+  border-top: 1px solid var(--os-ink);
+  border-radius: 3px 3px 0 0;
+  padding-bottom: calc(27px + env(safe-area-inset-bottom, 0px));
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  height: 61px;
+  padding: 3px 13px 0 3px;
+}
+
+.panelClose,
+.panelCollapse {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+}
+
+.panelTitle {
+  flex: 1;
+  margin: 0 0 0 13px; /* başlık soldan 60px */
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 28px;
+  text-transform: uppercase;
+}
+
+.panelLogo {
+  display: none;
+}
+
+.panelAll {
+  margin-right: 12px;
+  font-size: 15px;
+  line-height: 28px;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Swipe: native scroll-snap — momentum kaydırma, ekstra kütüphane yok. */
+.banners {
+  list-style: none;
+  margin: 0;
+  padding: 0 20px;
+  display: flex;
+  gap: 12.5px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 20px;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.banners::-webkit-scrollbar {
+  display: none;
+}
+
+.bannerItem {
+  flex: 0 0 175px;
+  scroll-snap-align: start;
+}
+
+/* ───────────────────────── Banner — mobil kart 175×175 ───────────────────────── */
+
+.banner {
+  --os-banner-bg: var(--os-placeholder);
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  padding: 15px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--os-banner-bg);
+  color: #fff;
+  text-align: center;
+}
+
+.banner[data-theme="olive"] { --os-banner-bg: var(--os-olive); }
+.banner[data-theme="ink"]   { --os-banner-bg: var(--os-ink); }
+.banner[data-theme="berry"] { --os-banner-bg: var(--os-berry); }
+.banner[data-theme="blue"]  { --os-banner-bg: var(--os-blue); }
+
+.bannerImage {
+  object-fit: cover;
+}
+
+.bannerBody {
+  position: relative; /* görselin üstünde kalsın */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bannerTitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.bannerDesc {
+  margin: 14px 0 0;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+/* Figma: 100×30, #FFF, radius 3, Jost SemiBold 12px #1A2A4A */
+.copyButton {
+  width: 100px;
+  height: 30px;
+  margin-top: 14px;
+  background: #fff;
+  color: var(--os-ink);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  border-radius: 3px;
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
+}
+
+.copyButton[data-status="copied"] {
+  background: var(--os-ink);
+  color: #fff;
+  box-shadow: inset 0 0 0 1px #fff;
+}
+
+.copyButton[data-status="failed"] {
+  width: auto;
+  padding: 0 12px;
+}
+
+/* ───────────────────────── Desktop ───────────────────────── */
+
+@media (min-width: 768px) {
+  .root {
+    --os-offset: 30px;
+  }
+
+  .iconMobile {
+    display: none;
+  }
+
+  .iconDesktop {
+    display: block;
+  }
+
+  /* Teaser: sol altta 30px boşlukla sabit bar (277×50) */
+  .teaser {
+    left: 30px;
+    right: auto;
+    bottom: 30px;
+    min-height: 50px;
+    padding: 0 20px 0 7px;
+    background: var(--os-blue);
+    color: #fff;
+    border: 1.5px solid #fff;
+    border-radius: 3px;
+  }
+
+  .teaserClose {
+    width: 32px;
+    height: 47px;
+  }
+
+  .teaserTrigger {
+    height: 47px;
+    padding: 0 0 0 5px; /* ikon soldan 20px, metin soldan 45px */
+  }
+
+  .teaserChevron {
+    display: none;
+  }
+
+  .ticker {
+    font-size: 14px;
+  }
+
+  /* Panel: tam ekran modal (Figma 1440×844) */
+  .panel {
+    inset: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 90px 32px 60px;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .panelHeader {
+    display: block;
+    height: auto;
+    padding: 0;
+  }
+
+  /* X: üstten 51px, sağdan 50px (44px dokunma alanı içinde ortalı) */
+  .panelClose {
+    position: absolute;
+    top: 37px;
+    right: 36px;
+  }
+
+  .panelLogo {
+    display: block;
+    margin: 0 auto;
+    line-height: 0;
+  }
+
+  /* Başlık desktop'ta görünmez ama ekran okuyucu için dialog adı olarak kalır */
+  .panelTitle {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .panelAll,
+  .panelCollapse {
+    display: none;
+  }
+
+  /* Banner grid: 2×2, 600×270 hücre, 20px boşluk, toplam 1220px */
+  .banners {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: min(1220px, 100%);
+    margin: 50px auto 0;
+    padding: 0;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+
+  .banner {
+    aspect-ratio: 600 / 270;
+    padding: 24px 32px;
+  }
+
+  .bannerTitle {
+    font-size: 24px;
+  }
+
+  .bannerDesc {
+    margin-top: 16px;
+    font-size: 16px;
+  }
+
+  /* Kuponlu banner: buton alttan 20px, yatayda ortalı */
+  .banner:has(.copyButton) {
+    padding-bottom: 60px;
+  }
+
+  .banner .copyButton {
+    position: absolute;
+    left: 50%;
+    bottom: 20px;
+    margin: 0;
+    transform: translateX(-50%);
+  }
+
+  .bannerBody {
+    position: static;
+  }
+
+  .bannerBody > :not(.copyButton) {
+    position: relative;
+  }
+}
+
+/* ───────────────────────── Motion ───────────────────────── */
+
+@keyframes os-slide-up {
+  from { transform: translateY(calc(100% + var(--os-offset))); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes os-slide-down {
+  from { transform: translateY(0); }
+  to   { transform: translateY(calc(100% + var(--os-offset))); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* 1ms: animationend yine tetiklensin ki kapanış akışı bozulmasın */
+  .teaser,
+  .teaserLeaving {
+    animation-duration: 1ms;
+  }
+
+  .tickerItem,
+  .copyButton {
+    transition: none;
+  }
+}
