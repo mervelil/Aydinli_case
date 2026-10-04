@@ -166,7 +166,7 @@ Böylece ayrı bir pop-up açılması yerine barın kendisi büyüyormuş gibi g
 
 **Hareket azaltma tercihi.** İşletim sisteminde "hareketi azalt" ayarı açık olan kullanıcılarda kayma ve genişleme animasyonları yerine kısa bir saydamlık geçişi kullanılır.
 
-## 9. Kod kalitesi
+## 9. Kod yapısı
 
 **Proje yapısı**
 
